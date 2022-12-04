@@ -2,8 +2,11 @@ console.log("Hello from Node App");
 console.log("Hello from Munim");
 
 const express = require('express');
+const connectDB = require('./config/db');
+
 const app = express();
 
+connectDB();
 app.use(express.json());
 
 app.use("/api/users", require("./routes/api/user"));
