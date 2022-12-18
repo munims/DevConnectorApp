@@ -12,7 +12,7 @@ app.use(express.json());
 app.use("/api/users", require("./routes/api/user"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/auth", require("./routes/api/auth"));
-app.use("/api/posts", require("./routes/api/posts"));
+app.use("/api/posts", require("./routes/api/post"));
 
 const port = process.env.PORT || 5005;
 

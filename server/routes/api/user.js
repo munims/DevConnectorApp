@@ -27,8 +27,8 @@ router.post("/register",
         check("email", "email is required").isEmail(),  
         check("password", "pls include the valid password").isLength({ min: 6 }),
     async(req, res) => {
-    console.log(req.headers);
-    console.log(JSON.stringify(req.body));
+        console.log(req.headers);
+        console.log(JSON.stringify(req.body));
 
     const errors = validationResult(req);
     if(!errors.isEmpty()){
