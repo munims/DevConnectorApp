@@ -8,7 +8,7 @@ const profileSchema = new mongoose.Schema({
     company:{type:String},
     website: {type:String},
     location: {type:String},
-    status: {type:String, required:true},
+    status: {type:String},
     skills: {type:[String], required:true},
 
     bio: {type:String},
