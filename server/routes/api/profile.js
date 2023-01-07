@@ -8,20 +8,24 @@ const normalize = require('normalize-url');
 
 const router   = express.Router();
 
+/*
 router.get("/", function(req, res) {
     res.json({
         message: "Hello from profile!",
     });
 });
+*/
+
 //route: Post /api/profile
 // @Desc: create or update a profile
 // @access : private(needs token) // validation of token
 
 router.post(
     '', 
+    auth,
     check('status', 'Status is required').notEmpty(), 
     check('skills', 'Skills are required').notEmpty(), 
-    auth,
+
     async (req, res) => {
         console.log(req.headers);
         console.log(JSON.stringify(req.body));
@@ -45,10 +49,10 @@ router.post(
           } = req.body;
           
           console.log(JSON.stringify(req.user));
-          console.log("id value is " + JSON.stringify(req.user.id) );
+          console.log("id value is" + JSON.stringify(req.user.id));
 
           const profileFields ={
-            userid: req.user.id,
+            user: req.user.id,
             website: website && website !==''? normalize(website, {forceHttps:true}):"",
             skills: Array.isArray(skills) ? skills : skills.
             split(",").map((skill)=> "" + skill.trim()),
@@ -61,7 +65,7 @@ router.post(
           //let profileResult = null;
           //start adding the details to mongodb via mongoose
           try{
-            console.log("Inside ttry before profile creation ");
+            console.log("Inside try before profile creation ");
              let profileResult = await profile.findOneAndUpdate(
                 {user: req.user.id},
                 {$set: profileFields},
@@ -81,4 +85,40 @@ router.post(
     }
 );
 
+// @route    GET api/profile/
+// @desc     Get all profiles
+// @access   Public
+router.get("/", auth, async (req, res) => {
+  try {
+    const profiles = await Profile.find().populate("user", ["name", "avatar"]);
+    res.json(profiles);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+
+// @route    GET api/profile/me
+// @desc     Get all profiles
+// @access   Private
+router.get("/me", auth, async (req, res) => {
+  // const profileObj = null;
+  try {
+    const profileObj = await profile
+      .findOne({
+        user: req.user.id,
+      })
+      .populate("user", ["name", "avatar"]);
+
+    if (!profileObj) {
+      return res.status(400).json({ msg: "There is no profile for this user" });
+    }
+
+    res.json(profileObj);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 module.exports =router;
